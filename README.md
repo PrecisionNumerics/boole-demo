@@ -124,9 +124,9 @@ curl -sS '<server-url>/v1/chat/completions' \
 The reply is in `choices[0].message.content`. Change the message to ask your own question.
 
 `boole-prep` downloads and exports the packed checkpoint. Installing the package registers the
-loader for its 1-bit embedding and output head. Config and tokenizer files come from the model
-repository when available, otherwise the public `Qwen/Qwen3-1.7B` assets. A downloaded model
-directory can also be passed in place of `MODEL_REPO`.
+loader for its 1-bit embedding and output head. This release includes the Qwen3-1.7B config
+and tokenizer files, so a downloaded model directory can also be exported offline in place
+of `MODEL_REPO`.
 
 The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, pinned by the package.
 
@@ -134,4 +134,5 @@ The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, pinned by the
 
 Runtime code is licensed under [Apache License 2.0](LICENSE).
 Model weights in this release use the
-[PolyForm Small Business License 1.0.0](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/LICENSE).
+[PolyForm Small Business License 1.0.0](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/LICENSE),
+with an additional grant for personal, noncommercial use by individuals.
