@@ -27,7 +27,7 @@ from vllm.model_executor.layers.vocab_parallel_embedding import (
 )
 from vllm.model_executor.parameter import GroupQuantScaleParameter, PackedvLLMParameter
 
-from .vllm_export import ZERO_POINT
+from . import QUANT_METHOD, ZERO_POINT
 
 _BITS_PER_WORD = 32
 
@@ -35,7 +35,7 @@ _BITS_PER_WORD = 32
 class W1HummingConfig(HummingConfig):
     @classmethod
     def get_name(cls) -> str:  # type: ignore[override]
-        return "w1_humming"
+        return QUANT_METHOD
 
     @classmethod
     def from_config(cls, config: dict) -> W1HummingConfig:

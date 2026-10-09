@@ -6,6 +6,8 @@ import argparse
 import json
 from pathlib import Path
 
+from huggingface_hub import snapshot_download
+
 from .model_dir import TOKENIZER_FILES
 from .vllm_export import export_vllm_dir
 from .w1 import W1Checkpoint
@@ -21,8 +23,6 @@ def main(argv: list[str] | None = None) -> None:
 
     source = Path(args.model)
     if not source.is_dir():
-        from huggingface_hub import snapshot_download
-
         source = Path(
             snapshot_download(
                 args.model, allow_patterns=["*.safetensors", "config.json", *TOKENIZER_FILES]
@@ -36,8 +36,6 @@ def main(argv: list[str] | None = None) -> None:
     tokenizer = source
     has_tokenizer = all((source / name).is_file() for name in TOKENIZER_FILES[:2])
     if not config_path.is_file() or not has_tokenizer:
-        from huggingface_hub import snapshot_download
-
         base = Path(
             snapshot_download("Qwen/Qwen3-1.7B", allow_patterns=["config.json", *TOKENIZER_FILES])
         )

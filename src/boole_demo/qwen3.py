@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import copy
-
 from .w1 import W1Checkpoint, W1FormatError
 
 _LAYER_LINEARS = (
@@ -64,7 +62,7 @@ def infer_dims(ckpt: W1Checkpoint) -> dict:
 
 def hf_config(ckpt: W1Checkpoint, base: dict) -> dict:
     """HF ``config.json`` content for this checkpoint (without quantization settings)."""
-    config = copy.deepcopy(base)
+    config = base.copy()
     for key, value in infer_dims(ckpt).items():
         if config.get(key) != value:
             raise W1FormatError(

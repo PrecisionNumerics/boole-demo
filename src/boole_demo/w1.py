@@ -24,10 +24,6 @@ from safetensors import safe_open
 
 SCALE_EPS = 1e-5
 
-EMBEDDING = "embedding"
-LM_HEAD = "lm_head"
-LINEAR = "linear"
-
 
 class W1FormatError(ValueError):
     """The file does not follow the packed 1-bit layout described above."""
@@ -36,7 +32,6 @@ class W1FormatError(ValueError):
 @dataclass(frozen=True)
 class W1Module:
     name: str
-    kind: str
     out_features: int
     in_features: int
     group_size: int
@@ -48,22 +43,18 @@ class W1Checkpoint:
     """A validated view of the packed safetensors file (tensors are read lazily)."""
 
     def __init__(self, path: str | Path):
-        self.path = Path(path)
-        self._file = safe_open(self.path, framework="pt", device="cpu")
+        self._file = safe_open(Path(path), framework="pt", device="cpu")
         self.metadata: dict[str, str] = dict(self._file.metadata() or {})
         self._keys = set(self._file.keys())
         self.modules: tuple[W1Module, ...] = self._discover()
         claimed = {m.code_key for m in self.modules} | {m.scale_key for m in self.modules}
         self.dense_keys: tuple[str, ...] = tuple(sorted(self._keys - claimed))
 
-    def close(self) -> None:
-        self._file = None  # safe_open handles are released with the object
-
     def __enter__(self) -> W1Checkpoint:
         return self
 
     def __exit__(self, *exc) -> None:
-        self.close()
+        self._file = None  # safe_open handles are released with the object
 
     def _shape(self, key: str) -> tuple[int, ...]:
         return tuple(self._file.get_slice(key).get_shape())
@@ -97,18 +88,11 @@ class W1Checkpoint:
                     f"{name!r}: scales {self._shape(scale_key)} do not tile codes "
                     f"{self._shape(code_key)}"
                 )
-            if name.endswith("embed_tokens"):
-                kind = EMBEDDING
-            elif name == "lm_head":
-                kind = LM_HEAD
-            else:
-                kind = LINEAR
-            if code_key != weight_key and kind != LM_HEAD:
+            if code_key != weight_key and name != "lm_head":
                 raise W1FormatError(f"{name!r}: only the output head may alias another module")
             modules.append(
                 W1Module(
                     name=name,
-                    kind=kind,
                     out_features=rows,
                     in_features=in_features,
                     group_size=in_features // groups,
@@ -133,9 +117,6 @@ class W1Checkpoint:
         """Packed uint8 signs ``[N, K/8]``; shared by the embedding and the head."""
         return self.tensor(module.code_key).contiguous()
 
-    def raw_scales(self, module: W1Module) -> torch.Tensor:
-        return self.tensor(module.scale_key).float()
-
     def magnitudes(self, module: W1Module) -> torch.Tensor:
         """Effective per-group magnitudes ``max(|scale|, SCALE_EPS)`` as float32 ``[N, G]``."""
-        return self.raw_scales(module).abs().clamp_min(SCALE_EPS)
+        return self.tensor(module.scale_key).float().abs().clamp_min(SCALE_EPS)

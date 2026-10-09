@@ -16,7 +16,6 @@ TOKENIZER_FILES = (
 
 
 def copy_tokenizer_files(dest: Path, source: Path) -> None:
-    dest.mkdir(parents=True, exist_ok=True)
     for name in TOKENIZER_FILES:
         path = source / name
         if path.is_file():

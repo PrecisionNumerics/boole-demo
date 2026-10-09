@@ -23,12 +23,10 @@ from pathlib import Path
 import torch
 from safetensors.torch import save_file
 
+from . import QUANT_METHOD, ZERO_POINT
 from .model_dir import copy_tokenizer_files
 from .qwen3 import hf_config
-from .w1 import LM_HEAD, SCALE_EPS, W1Checkpoint
-
-QUANT_METHOD = "w1_humming"
-ZERO_POINT = 0.5
+from .w1 import SCALE_EPS, W1Checkpoint
 
 
 def quantization_config(group_size: int) -> dict:
@@ -46,7 +44,7 @@ def quantization_config(group_size: int) -> dict:
 def humming_tensors(ckpt: W1Checkpoint) -> dict[str, torch.Tensor]:
     tensors: dict[str, torch.Tensor] = {}
     for module in ckpt.modules:
-        if module.kind != LM_HEAD:
+        if module.name != "lm_head":
             codes = ckpt.codes(module)
             if codes.shape[1] % 4:
                 raise ValueError(f"{module.name}: K must be a multiple of 32 for int32 packing")
