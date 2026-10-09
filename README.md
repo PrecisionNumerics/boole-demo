@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/pn-admin/abc"><strong>🤗 Hugging Face model</strong></a>
+  <a href="https://huggingface.co/precision-numerics/Boole-1.7B"><strong>🤗 Hugging Face model</strong></a>
   &nbsp;·&nbsp;
   <a href="#quick-start">Quick start</a>
 </p>
@@ -18,8 +18,8 @@
 | [llama.cpp](#llamacpp) | Published Q1_0 GGUF | CPU or CUDA GPU |
 | [vLLM + Humming](#vllm--humming) | Packed checkpoint → local Humming export | CUDA GPU; bf16, single GPU |
 
-The model is currently hosted at **`pn-admin/abc`**. This path is temporary and will be renamed
-later. Change `MODEL_REPO` below when the new name is available.
+The model is hosted at **`precision-numerics/Boole-1.7B`**.
+The model repository is currently private; use a Hugging Face account with access.
 
 ## Quick start
 
@@ -29,8 +29,9 @@ Run these commands from a clone of this repository. Python 3.10+ is required.
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install huggingface_hub
+hf auth login
 
-export MODEL_REPO=pn-admin/abc
+export MODEL_REPO=precision-numerics/Boole-1.7B
 ```
 
 Choose a runtime below. The examples use a 4,096-token context and disable thinking.
@@ -131,4 +132,6 @@ The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, pinned by the
 
 ## License
 
-Licensed under the [Apache License 2.0](LICENSE).
+Runtime code is licensed under [Apache License 2.0](LICENSE).
+Model weights in this release use the
+[PolyForm Small Business License 1.0.0](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/LICENSE).
