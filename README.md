@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo-white-on-black.png" width="128" height="128" alt="Boole-1.7B logo">
+</p>
+
 <h1 align="center">Boole Demo</h1>
 
 <p align="center">
@@ -132,7 +136,6 @@ The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, pinned by the
 
 ## License
 
-Runtime code is licensed under [Apache License 2.0](LICENSE).
-Model weights in this release use the
-[PolyForm Small Business License 1.0.0](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/LICENSE),
-with an additional grant for personal, noncommercial use by individuals.
+Runtime code and model weights are licensed under **Apache License 2.0**.
+See the [runtime license](LICENSE) and
+[model license](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/LICENSE).
