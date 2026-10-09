@@ -113,6 +113,22 @@ activations to 8 bits for `Q1_0` mat-muls while Humming and the reference keep 1
 which is consistent with — but was not isolated as — the source of the small differences.
 No perplexity benchmark or downstream eval has been run on either engine.
 
+## Throughput
+
+On one RTX 5090, with 512 input tokens and 256 output tokens per request, three measured
+repetitions after warmup, and prompt caching disabled:
+
+| concurrent requests | llama.cpp Q1_0 output tokens/sec | vLLM + Humming output tokens/sec |
+|---|---:|---:|
+| 1 | 728 | 633 |
+| 8 | 1,800 | 3,445 |
+| 32 | 2,130 | 7,489 |
+
+These are aggregate generated-token rates including prompt processing and local streaming API
+overhead. Model loading, compilation, and warmup are excluded. See
+[docs/benchmarks.md](docs/benchmarks.md) for latency, run variation, settings, raw batch
+measurements, and reproduction commands.
+
 ## Tests
 
 ```bash
@@ -136,4 +152,5 @@ embedding's scales — that must miss the dense reference by > 20× the pass tol
 - **Only bf16 activations** are validated for vLLM. fp16 would round the sub-floor scales into fp16
   subnormals.
 - The head's Humming copy and the embedding's raw codes coexist on the GPU (~39 MB extra).
-- Throughput has not been measured; no performance claims are made here.
+- Throughput is measured only for the workload and hardware in
+  [docs/benchmarks.md](docs/benchmarks.md); longer contexts and other GPUs remain unmeasured.

@@ -1,0 +1,481 @@
+{
+  "metadata": {
+    "measured_at": "2026-10-09T12:08:33.817602+00:00",
+    "versions": {
+      "torch": "2.13.0",
+      "vllm": "0.31.0",
+      "humming-kernels": "0.1.16"
+    },
+    "gpu": "NVIDIA GeForce RTX 5090, 580.95.05, 32607 MiB, 500.00 W",
+    "llama_commit": "b42b7e6d3059503dd4bed6ca5dcf342bb6379f67",
+    "gguf_sha256": "d958e16acf0bc23d0dbf0761eb0f9403815ae0f3b9d4451b71b658cccc89a58a",
+    "vllm_weights_sha256": "416131be50c6a10f36e1491e4c870514f1e3d39e57817265bbdec6f838d087cb",
+    "input_tokens": 512,
+    "output_tokens": 256,
+    "warmups_per_batch": 1,
+    "repetitions": 3,
+    "metric": "generated output tokens / concurrent-batch wall time, including prefill and HTTP",
+    "prompt_token_ids_sha256": "634da1455e5c8dc9ff7caa32bd88bbda58dc84b3d7a5b5e9a07cb88f5e65e55c",
+    "script_sha256": "a74a9dffe2f57ebe6be8cd0c756275d511090b8fb05a3d0c437a70315ef3193c",
+    "model_repository": "https://huggingface.co/pn-admin/abc",
+    "artifact_origin": "Existing local opd1200 exports; model repository was not re-downloaded for this run."
+  },
+  "engines": {
+    "llama": {
+      "engine": "llama",
+      "command": [
+        "third_party/llama.cpp/build/bin/llama-server",
+        "-m",
+        "out/qwen3-1.7b-opd1200-Q1_0.gguf",
+        "-ngl",
+        "99",
+        "-fa",
+        "on",
+        "-t",
+        "8",
+        "-np",
+        "32",
+        "-c",
+        "32768",
+        "-b",
+        "2048",
+        "-ub",
+        "512",
+        "--cache-ram",
+        "0",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8091"
+      ],
+      "results": [
+        {
+          "batch_size": 1,
+          "output_tokens_per_s_mean": 727.6713256960535,
+          "output_tokens_per_s_stdev": 1.3127319509497548,
+          "median_ttft_ms": 15.549527946859598,
+          "median_decode_tokens_per_s": 759.1037230673826,
+          "samples": [
+            {
+              "elapsed_s": 0.35124585404992104,
+              "output_tokens_per_s": 728.834225509793,
+              "median_ttft_ms": 15.420273877680302,
+              "median_decode_tokens_per_s": 759.7794841023994,
+              "request_count": 1,
+              "input_tokens_total": 512,
+              "output_tokens_total": 256
+            },
+            {
+              "elapsed_s": 0.3524967422708869,
+              "output_tokens_per_s": 726.2478465780231,
+              "median_ttft_ms": 15.558165032416582,
+              "median_decode_tokens_per_s": 757.2158237651837,
+              "request_count": 1,
+              "input_tokens_total": 512,
+              "output_tokens_total": 256
+            },
+            {
+              "elapsed_s": 0.3516812468878925,
+              "output_tokens_per_s": 727.9319050003444,
+              "median_ttft_ms": 15.549527946859598,
+              "median_decode_tokens_per_s": 759.1037230673826,
+              "request_count": 1,
+              "input_tokens_total": 512,
+              "output_tokens_total": 256
+            }
+          ]
+        },
+        {
+          "batch_size": 8,
+          "output_tokens_per_s_mean": 1800.1736594764907,
+          "output_tokens_per_s_stdev": 8.998714497001508,
+          "median_ttft_ms": 91.70909901149571,
+          "median_decode_tokens_per_s": 244.70270420909907,
+          "samples": [
+            {
+              "elapsed_s": 1.1419156650081277,
+              "output_tokens_per_s": 1793.4774543840094,
+              "median_ttft_ms": 95.33404186367989,
+              "median_decode_tokens_per_s": 244.70270420909907,
+              "request_count": 8,
+              "input_tokens_total": 4096,
+              "output_tokens_total": 2048
+            },
+            {
+              "elapsed_s": 1.139905087184161,
+              "output_tokens_per_s": 1796.640810735437,
+              "median_ttft_ms": 90.92441946268082,
+              "median_decode_tokens_per_s": 243.94028128633414,
+              "request_count": 8,
+              "input_tokens_total": 4096,
+              "output_tokens_total": 2048
+            },
+            {
+              "elapsed_s": 1.1312400191091,
+              "output_tokens_per_s": 1810.4027133100255,
+              "median_ttft_ms": 91.70909901149571,
+              "median_decode_tokens_per_s": 245.9865347996914,
+              "request_count": 8,
+              "input_tokens_total": 4096,
+              "output_tokens_total": 2048
+            }
+          ]
+        },
+        {
+          "batch_size": 32,
+          "output_tokens_per_s_mean": 2129.830132297513,
+          "output_tokens_per_s_stdev": 4.442183623236945,
+          "median_ttft_ms": 287.9259034525603,
+          "median_decode_tokens_per_s": 72.08512180694005,
+          "samples": [
+            {
+              "elapsed_s": 3.850919392891228,
+              "output_tokens_per_s": 2127.284205201069,
+              "median_ttft_ms": 289.24704156816006,
+              "median_decode_tokens_per_s": 72.08512180694005,
+              "request_count": 32,
+              "input_tokens_total": 16384,
+              "output_tokens_total": 8192
+            },
+            {
+              "elapsed_s": 3.850987263955176,
+              "output_tokens_per_s": 2127.246713245778,
+              "median_ttft_ms": 287.9259034525603,
+              "median_decode_tokens_per_s": 72.04152324421813,
+              "request_count": 32,
+              "input_tokens_total": 16384,
+              "output_tokens_total": 8192
+            },
+            {
+              "elapsed_s": 3.8370751682668924,
+              "output_tokens_per_s": 2134.9594784456917,
+              "median_ttft_ms": 285.96274508163333,
+              "median_decode_tokens_per_s": 72.27474704742554,
+              "request_count": 32,
+              "input_tokens_total": 16384,
+              "output_tokens_total": 8192
+            }
+          ]
+        }
+      ]
+    },
+    "vllm": {
+      "engine": "vllm",
+      "command": [
+        "/workspace/boole-demo-private/.venv/bin/python",
+        "-m",
+        "vllm.entrypoints.cli.main",
+        "serve",
+        "out/qwen3-1.7b-opd1200-humming",
+        "--served-model-name",
+        "boole-benchmark",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8091",
+        "--max-model-len",
+        "1024",
+        "--max-num-seqs",
+        "32",
+        "--max-num-batched-tokens",
+        "2048",
+        "--gpu-memory-utilization",
+        "0.6",
+        "--no-enable-prefix-caching",
+        "--generation-config",
+        "vllm",
+        "--dtype",
+        "bfloat16",
+        "--seed",
+        "0",
+        "--disable-uvicorn-access-log"
+      ],
+      "results": [
+        {
+          "batch_size": 1,
+          "output_tokens_per_s_mean": 633.4110112581076,
+          "output_tokens_per_s_stdev": 0.3881883031549149,
+          "median_ttft_ms": 11.92735880613327,
+          "median_decode_tokens_per_s": 650.2574860422234,
+          "samples": [
+            {
+              "elapsed_s": 0.4044095710851252,
+              "output_tokens_per_s": 633.0216154704061,
+              "median_ttft_ms": 12.211156077682972,
+              "median_decode_tokens_per_s": 650.3551689704982,
+              "request_count": 1,
+              "input_tokens_total": 512,
+              "output_tokens_total": 256
+            },
+            {
+              "elapsed_s": 0.40415940806269646,
+              "output_tokens_per_s": 633.4134376015496,
+              "median_ttft_ms": 11.92735880613327,
+              "median_decode_tokens_per_s": 650.2574860422234,
+              "request_count": 1,
+              "input_tokens_total": 512,
+              "output_tokens_total": 256
+            },
+            {
+              "elapsed_s": 0.40391419315710664,
+              "output_tokens_per_s": 633.797980702367,
+              "median_ttft_ms": 11.570262722671032,
+              "median_decode_tokens_per_s": 650.0914308822538,
+              "request_count": 1,
+              "input_tokens_total": 512,
+              "output_tokens_total": 256
+            }
+          ]
+        },
+        {
+          "batch_size": 8,
+          "output_tokens_per_s_mean": 3445.1605113546825,
+          "output_tokens_per_s_stdev": 5.124616761328641,
+          "median_ttft_ms": 55.57381804101169,
+          "median_decode_tokens_per_s": 474.40521320935085,
+          "samples": [
+            {
+              "elapsed_s": 0.5937430239282548,
+              "output_tokens_per_s": 3449.30368436206,
+              "median_ttft_ms": 55.57381804101169,
+              "median_decode_tokens_per_s": 475.1435377938228,
+              "request_count": 8,
+              "input_tokens_total": 4096,
+              "output_tokens_total": 2048
+            },
+            {
+              "elapsed_s": 0.5954474909231067,
+              "output_tokens_per_s": 3439.4300609530474,
+              "median_ttft_ms": 55.96548947505653,
+              "median_decode_tokens_per_s": 473.8820830354062,
+              "request_count": 8,
+              "input_tokens_total": 4096,
+              "output_tokens_total": 2048
+            },
+            {
+              "elapsed_s": 0.5941833071410656,
+              "output_tokens_per_s": 3446.74778874894,
+              "median_ttft_ms": 55.14527694322169,
+              "median_decode_tokens_per_s": 474.40521320935085,
+              "request_count": 8,
+              "input_tokens_total": 4096,
+              "output_tokens_total": 2048
+            }
+          ]
+        },
+        {
+          "batch_size": 32,
+          "output_tokens_per_s_mean": 7489.2312804337125,
+          "output_tokens_per_s_stdev": 10.08239883082435,
+          "median_ttft_ms": 154.12392024882138,
+          "median_decode_tokens_per_s": 273.87951101287246,
+          "samples": [
+            {
+              "elapsed_s": 1.092162312939763,
+              "output_tokens_per_s": 7500.716608641869,
+              "median_ttft_ms": 152.5304743554443,
+              "median_decode_tokens_per_s": 273.87951101287246,
+              "request_count": 32,
+              "input_tokens_total": 16384,
+              "output_tokens_total": 8192
+            },
+            {
+              "elapsed_s": 1.0949179278686643,
+              "output_tokens_per_s": 7481.839315524143,
+              "median_ttft_ms": 155.48818302340806,
+              "median_decode_tokens_per_s": 273.9297927120786,
+              "request_count": 32,
+              "input_tokens_total": 16384,
+              "output_tokens_total": 8192
+            },
+            {
+              "elapsed_s": 1.0944354119710624,
+              "output_tokens_per_s": 7485.137917135125,
+              "median_ttft_ms": 154.12392024882138,
+              "median_decode_tokens_per_s": 273.6674291377909,
+              "request_count": 32,
+              "input_tokens_total": 16384,
+              "output_tokens_total": 8192
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "llama_native": [
+    {
+      "build_commit": "b42b7e6",
+      "build_number": 1,
+      "cpu_info": "AMD Ryzen 7 7800X3D 8-Core Processor",
+      "gpu_info": "NVIDIA GeForce RTX 5090",
+      "backends": "CUDA",
+      "model_filename": "out/qwen3-1.7b-opd1200-Q1_0.gguf",
+      "model_type": "qwen3 1.7B Q1_0",
+      "model_size": 286191616,
+      "model_n_params": 2031739904,
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "n_threads": 8,
+      "cpu_mask": "0x0",
+      "cpu_strict": false,
+      "poll": 50,
+      "type_k": "f16",
+      "type_v": "f16",
+      "n_gpu_layers": 99,
+      "n_cpu_moe": 0,
+      "split_mode": "layer",
+      "main_gpu": 0,
+      "no_kv_offload": false,
+      "flash_attn": 1,
+      "devices": "auto",
+      "tensor_split": "0.00",
+      "tensor_buft_overrides": "none",
+      "load_mode": "auto",
+      "lazy_mode": "auto",
+      "embeddings": false,
+      "no_op_offload": 0,
+      "no_host": false,
+      "repack": true,
+      "fit_target": 0,
+      "fit_min_ctx": 0,
+      "n_prompt": 512,
+      "n_gen": 0,
+      "n_depth": 0,
+      "test_time": "2026-10-09T12:06:31Z",
+      "avg_ns": 15105488,
+      "stddev_ns": 2047011,
+      "avg_ts": 34321.695947,
+      "stddev_ts": 3936.277954,
+      "samples_ns": [
+        18766644,
+        14207472,
+        14165713,
+        14243900,
+        14143711
+      ],
+      "samples_ts": [
+        27282.4,
+        36037.4,
+        36143.6,
+        35945.2,
+        36199.8
+      ]
+    },
+    {
+      "build_commit": "b42b7e6",
+      "build_number": 1,
+      "cpu_info": "AMD Ryzen 7 7800X3D 8-Core Processor",
+      "gpu_info": "NVIDIA GeForce RTX 5090",
+      "backends": "CUDA",
+      "model_filename": "out/qwen3-1.7b-opd1200-Q1_0.gguf",
+      "model_type": "qwen3 1.7B Q1_0",
+      "model_size": 286191616,
+      "model_n_params": 2031739904,
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "n_threads": 8,
+      "cpu_mask": "0x0",
+      "cpu_strict": false,
+      "poll": 50,
+      "type_k": "f16",
+      "type_v": "f16",
+      "n_gpu_layers": 99,
+      "n_cpu_moe": 0,
+      "split_mode": "layer",
+      "main_gpu": 0,
+      "no_kv_offload": false,
+      "flash_attn": 1,
+      "devices": "auto",
+      "tensor_split": "0.00",
+      "tensor_buft_overrides": "none",
+      "load_mode": "auto",
+      "lazy_mode": "auto",
+      "embeddings": false,
+      "no_op_offload": 0,
+      "no_host": false,
+      "repack": true,
+      "fit_target": 0,
+      "fit_min_ctx": 0,
+      "n_prompt": 0,
+      "n_gen": 256,
+      "n_depth": 0,
+      "test_time": "2026-10-09T12:06:31Z",
+      "avg_ns": 265391577,
+      "stddev_ns": 613069,
+      "avg_ts": 964.616474,
+      "stddev_ts": 2.219988,
+      "samples_ns": [
+        266483582,
+        265206644,
+        265104460,
+        265079212,
+        265083991
+      ],
+      "samples_ts": [
+        960.66,
+        965.285,
+        965.657,
+        965.749,
+        965.732
+      ]
+    },
+    {
+      "build_commit": "b42b7e6",
+      "build_number": 1,
+      "cpu_info": "AMD Ryzen 7 7800X3D 8-Core Processor",
+      "gpu_info": "NVIDIA GeForce RTX 5090",
+      "backends": "CUDA",
+      "model_filename": "out/qwen3-1.7b-opd1200-Q1_0.gguf",
+      "model_type": "qwen3 1.7B Q1_0",
+      "model_size": 286191616,
+      "model_n_params": 2031739904,
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "n_threads": 8,
+      "cpu_mask": "0x0",
+      "cpu_strict": false,
+      "poll": 50,
+      "type_k": "f16",
+      "type_v": "f16",
+      "n_gpu_layers": 99,
+      "n_cpu_moe": 0,
+      "split_mode": "layer",
+      "main_gpu": 0,
+      "no_kv_offload": false,
+      "flash_attn": 1,
+      "devices": "auto",
+      "tensor_split": "0.00",
+      "tensor_buft_overrides": "none",
+      "load_mode": "auto",
+      "lazy_mode": "auto",
+      "embeddings": false,
+      "no_op_offload": 0,
+      "no_host": false,
+      "repack": true,
+      "fit_target": 0,
+      "fit_min_ctx": 0,
+      "n_prompt": 512,
+      "n_gen": 256,
+      "n_depth": 0,
+      "test_time": "2026-10-09T12:06:32Z",
+      "avg_ns": 289865114,
+      "stddev_ns": 271585,
+      "avg_ts": 2649.510055,
+      "stddev_ts": 2.473677,
+      "samples_ns": [
+        290290348,
+        289828824,
+        289921059,
+        289709989,
+        289575353
+      ],
+      "samples_ts": [
+        2645.63,
+        2649.84,
+        2649,
+        2650.93,
+        2652.16
+      ]
+    }
+  ]
+}
