@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "boole-demo"
+version = "0.1.0.dev0"
+description = "Prepare the opd1200 1-bit Qwen3-1.7B checkpoint for llama.cpp (Q1_0 GGUF) and vLLM + Humming"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "torch>=2.7",
+  "safetensors>=0.4",
+  "numpy",
+  "gguf>=0.19",
+  "huggingface_hub>=0.30",
+]
+
+[project.optional-dependencies]
+# The plugin targets exactly this vLLM release; see docs/vllm_humming.md.
+vllm = ["vllm==0.31.0"]
+test = ["pytest>=8", "ruff>=0.12"]
+
+[project.scripts]
+boole-prep = "boole_demo.cli:main"
+
+[project.entry-points."vllm.general_plugins"]
+boole_w1 = "boole_demo.vllm_plugin:register"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/boole_demo"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "gpu: requires a CUDA device",
+  "model: requires the real opd1200 checkpoint (set BOOLE_CHECKPOINT)",
+  "llama_cpp: requires a built llama.cpp (set LLAMA_CPP_DIR)",
+  "vllm: requires vLLM 0.31.0 and a CUDA device",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
