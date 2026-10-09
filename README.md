@@ -149,3 +149,7 @@ curl http://127.0.0.1:8000/v1/chat/completions \
 
 Both runtimes expose an OpenAI-compatible API. The example was checked with both engines;
 the assistant returned `2 + 2 = 4.`
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).
