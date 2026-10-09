@@ -90,6 +90,9 @@ third_party/llama.cpp/build/bin/llama-server \
     --chat-template-kwargs '{"enable_thinking": false}'
 ```
 
+Once the server is ready, open the URL printed in the terminal in your browser.
+In the chat UI, try: **Explain why the sky is blue in one sentence.**
+
 ### vLLM + Humming
 
 Install the loader, prepare the model, and start the server:
@@ -102,6 +105,22 @@ vllm serve out/humming \
     --dtype bfloat16 --max-model-len 4096 \
     --default-chat-template-kwargs '{"enable_thinking": false}'
 ```
+
+Keep the server running. In another terminal, replace `<server-url>` with the server's URL
+and send a chat request:
+
+```bash
+curl -sS '<server-url>/v1/chat/completions' \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "model": "out/humming",
+      "messages": [{"role": "user", "content": "Explain why the sky is blue in one sentence."}],
+      "max_tokens": 128,
+      "temperature": 0
+    }'
+```
+
+The reply is in `choices[0].message.content`. Change the message to ask your own question.
 
 `boole-prep` downloads and exports the packed checkpoint. Installing the package registers the
 loader for its 1-bit embedding and output head. Config and tokenizer files come from the model
