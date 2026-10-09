@@ -26,6 +26,10 @@
 | [llama.cpp](#llamacpp) | Published Q1_0 GGUF | CPU or CUDA GPU |
 | [vLLM + Humming](#vllm--humming) | Packed checkpoint → local Humming export | CUDA GPU; bf16, single GPU |
 
+Safetensors shares sign bits between the embeddings and output head, with separate scales.
+GGUF Q1_0 packs bits and scales together, so it stores both matrices separately and produces
+a slightly larger file.
+
 The model is hosted at **`precision-numerics/Boole-1.7B`**.
 The model repository is currently private; use a Hugging Face account with access.
 
