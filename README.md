@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/pn-admin/abc"><strong>Hugging Face model</strong></a>
+  <a href="https://huggingface.co/pn-admin/abc"><strong>🤗 Hugging Face model</strong></a>
   &nbsp;·&nbsp;
   <a href="#quick-start">Quick start</a>
   &nbsp;·&nbsp;
