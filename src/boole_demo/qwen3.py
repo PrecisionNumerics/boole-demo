@@ -1,46 +1,10 @@
-"""Qwen3 architecture facts for this checkpoint.
-
-The safetensors file carries no config, so dimensions are inferred from tensor shapes and
-the remaining constants (RoPE base, norm epsilon, ...) come from the public
-``Qwen/Qwen3-1.7B`` config, which the shapes match exactly.
-"""
+"""Check the packed checkpoint against the model repository's Qwen3 configuration."""
 
 from __future__ import annotations
 
 import copy
-import json
-from pathlib import Path
 
 from .w1 import W1Checkpoint, W1FormatError
-
-# Verbatim from https://huggingface.co/Qwen/Qwen3-1.7B/blob/main/config.json
-QWEN3_1P7B_CONFIG: dict = {
-    "architectures": ["Qwen3ForCausalLM"],
-    "attention_bias": False,
-    "attention_dropout": 0.0,
-    "bos_token_id": 151643,
-    "eos_token_id": 151645,
-    "head_dim": 128,
-    "hidden_act": "silu",
-    "hidden_size": 2048,
-    "initializer_range": 0.02,
-    "intermediate_size": 6144,
-    "max_position_embeddings": 40960,
-    "max_window_layers": 28,
-    "model_type": "qwen3",
-    "num_attention_heads": 16,
-    "num_hidden_layers": 28,
-    "num_key_value_heads": 8,
-    "rms_norm_eps": 1e-06,
-    "rope_scaling": None,
-    "rope_theta": 1000000,
-    "sliding_window": None,
-    "tie_word_embeddings": True,
-    "torch_dtype": "bfloat16",
-    "use_cache": True,
-    "use_sliding_window": False,
-    "vocab_size": 151936,
-}
 
 _LAYER_LINEARS = (
     "self_attn.q_proj",
@@ -98,17 +62,13 @@ def infer_dims(ckpt: W1Checkpoint) -> dict:
     }
 
 
-def hf_config(ckpt: W1Checkpoint, base: dict | None = None) -> dict:
+def hf_config(ckpt: W1Checkpoint, base: dict) -> dict:
     """HF ``config.json`` content for this checkpoint (without quantization settings)."""
-    config = copy.deepcopy(base if base is not None else QWEN3_1P7B_CONFIG)
+    config = copy.deepcopy(base)
     for key, value in infer_dims(ckpt).items():
         if config.get(key) != value:
             raise W1FormatError(
                 f"checkpoint implies {key}={value} but the base config has {config.get(key)!r}; "
-                "pass --base-config with the config this model was trained from"
+                "use the config.json distributed with this model"
             )
     return config
-
-
-def load_base_config(path: str | Path | None) -> dict | None:
-    return None if path is None else json.loads(Path(path).read_text())

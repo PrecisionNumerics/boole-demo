@@ -1,4 +1,4 @@
-"""Reader and reference decoder for the packed 1-bit ("W1") checkpoint.
+"""Reader for the packed 1-bit ("W1") checkpoint.
 
 For every quantized module ``<name>`` the file holds::
 
@@ -42,27 +42,6 @@ class W1Module:
     group_size: int
     code_key: str
     scale_key: str
-
-    @property
-    def num_groups(self) -> int:
-        return self.in_features // self.group_size
-
-
-def unpack_signs(codes: torch.Tensor) -> torch.Tensor:
-    """uint8 ``[N, K/8]`` LSB-first codes to int8 ``[N, K]`` of +1/-1."""
-    shifts = torch.arange(8, device=codes.device, dtype=torch.uint8)
-    bits = (codes.unsqueeze(-1) >> shifts) & 1
-    return (bits.reshape(codes.shape[0], -1).to(torch.int8) * 2) - 1
-
-
-def pack_signs(signs: torch.Tensor) -> torch.Tensor:
-    """Inverse of :func:`unpack_signs` (any value >= 0 is a one bit)."""
-    n, k = signs.shape
-    if k % 8:
-        raise W1FormatError(f"cannot pack {k} columns into whole bytes")
-    bits = (signs >= 0).reshape(n, k // 8, 8).to(torch.uint8)
-    shifts = torch.arange(8, device=signs.device, dtype=torch.uint8)
-    return (bits << shifts).sum(dim=-1, dtype=torch.uint8)
 
 
 class W1Checkpoint:
@@ -147,12 +126,6 @@ class W1Checkpoint:
     def group_size(self) -> int:
         return self.modules[0].group_size
 
-    def module(self, name: str) -> W1Module:
-        for m in self.modules:
-            if m.name == name:
-                return m
-        raise KeyError(name)
-
     def tensor(self, key: str) -> torch.Tensor:
         return self._file.get_tensor(key)
 
@@ -166,23 +139,3 @@ class W1Checkpoint:
     def magnitudes(self, module: W1Module) -> torch.Tensor:
         """Effective per-group magnitudes ``max(|scale|, SCALE_EPS)`` as float32 ``[N, G]``."""
         return self.raw_scales(module).abs().clamp_min(SCALE_EPS)
-
-    def dense(
-        self,
-        module: W1Module,
-        dtype: torch.dtype = torch.float32,
-        rows: slice | None = None,
-        *,
-        signed_scales: bool = False,
-    ) -> torch.Tensor:
-        """Dequantized ``[N, K]`` weight. ``signed_scales`` is only for diagnostics."""
-        rows = rows or slice(None)
-        codes = self.codes(module)[rows]
-        scales = self.raw_scales(module)[rows]
-        if not signed_scales:
-            scales = scales.abs().clamp_min(SCALE_EPS)
-        signs = unpack_signs(codes).float()
-        out = signs.view(codes.shape[0], module.num_groups, module.group_size) * scales.unsqueeze(
-            -1
-        )
-        return out.reshape(codes.shape[0], module.in_features).to(dtype)

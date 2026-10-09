@@ -17,15 +17,13 @@ deliberately absent and is tied to the embedding's codes by the plugin in
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 
 import torch
 from safetensors.torch import save_file
 
-from . import __version__
-from .model_dir import DEFAULT_TOKENIZER_REPO, copy_tokenizer_files
+from .model_dir import copy_tokenizer_files
 from .qwen3 import hf_config
 from .w1 import LM_HEAD, SCALE_EPS, W1Checkpoint
 
@@ -59,41 +57,19 @@ def humming_tensors(ckpt: W1Checkpoint) -> dict[str, torch.Tensor]:
     return tensors
 
 
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1 << 22), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def export_vllm_dir(
     ckpt: W1Checkpoint,
     out_dir: Path,
     *,
-    tokenizer: str | Path | None = DEFAULT_TOKENIZER_REPO,
-    base_config: dict | None = None,
+    tokenizer: Path,
+    base_config: dict,
 ) -> Path:
-    """Write the model directory. ``tokenizer=None`` omits tokenizer files (token-id use only)."""
+    """Write Humming weights with the source model's configuration and tokenizer."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     config = hf_config(ckpt, base_config)
     config["quantization_config"] = quantization_config(ckpt.group_size)
     (out_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n")
-    if tokenizer is not None:
-        copy_tokenizer_files(out_dir, tokenizer)
+    copy_tokenizer_files(out_dir, tokenizer)
     save_file(humming_tensors(ckpt), out_dir / "model.safetensors", metadata={"format": "pt"})
-    (out_dir / "boole_export.json").write_text(
-        json.dumps(
-            {
-                "tool": f"boole-demo {__version__}",
-                "source": ckpt.path.name,
-                "source_sha256": _sha256(ckpt.path),
-                "scale_transform": f"max(abs(scale), {SCALE_EPS})",
-                "tied_embedding": "model.embed_tokens.weight shared with lm_head; scales distinct",
-            },
-            indent=2,
-        )
-        + "\n"
-    )
     return out_dir

@@ -8,7 +8,7 @@ embedding method. This subclass hands every linear layer to the stock implementa
 * :class:`W1HeadMethod` -- runs the output projection through the same Humming GEMM, with
   ``tie_weights`` sharing the embedding's *codes* while the head keeps its *own* scales.
 
-Written against vLLM 0.31.0 (``docs/vllm_humming.md``).
+Written against the public vLLM 0.31.0 and Humming kernels 0.1.16 packages.
 """
 
 from __future__ import annotations
