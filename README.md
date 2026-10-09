@@ -17,6 +17,8 @@
 
 ---
 
+![Boole-1.7B compared with Bonsai, Ternary-Bonsai, and Qwen3](boole-vs-bonsai.png)
+
 | Runtime | Model format | Hardware |
 |---|---|---|
 | [llama.cpp](#llamacpp) | Published Q1_0 GGUF | CPU or CUDA GPU |
