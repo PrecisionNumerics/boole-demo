@@ -7,6 +7,9 @@ Prepare the `opd1200` 1-bit Qwen3-1.7B checkpoint
 2. **vLLM + Humming** — a vLLM model directory served by vLLM's Humming kernels, with a small
    plugin that adds the 1-bit embedding and output head stock vLLM cannot serve.
 
+The current model repository is [pn-admin/abc](https://huggingface.co/pn-admin/abc).
+This is a temporary name; the model repository will be renamed later.
+
 The repository is self-contained: it depends only on public packages (`torch`, `safetensors`,
 `gguf`, `vllm`, `humming-kernels`) and a pinned upstream llama.cpp checkout.
 

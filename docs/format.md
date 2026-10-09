@@ -2,6 +2,9 @@
 
 `qwen3-1p7b-SFTv3-1000M-opd1200-packed.safetensors` (247 MB, 508 tensors, no config/tokenizer).
 
+Current model repository: [pn-admin/abc](https://huggingface.co/pn-admin/abc)
+(temporary name, to be renamed later).
+
 ## Layout
 
 For each quantized module `<name>` (196 projections, `model.embed_tokens`, `lm_head`):
