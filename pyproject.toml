@@ -21,7 +21,7 @@ dependencies = [
 vllm = ["vllm==0.31.0", "humming-kernels==0.1.16"]
 
 [project.urls]
-Repository = "https://github.com/PrecisionNumerics/boole-demo-private"
+Repository = "https://github.com/PrecisionNumerics/boole-demo"
 
 [project.scripts]
 boole-prep = "boole_demo.cli:main"
