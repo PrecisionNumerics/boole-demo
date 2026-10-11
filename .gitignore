@@ -1,0 +1,7 @@
+.venv/
+model/
+third_party/
+out/
+__pycache__/
+*.egg-info/
+.ruff_cache/

@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "boole-demo"
+version = "0.1.0"
+description = "Run Boole-1.7B, a 1-bit Qwen3-1.7B, locally with llama.cpp or vLLM + Humming"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Precision Numerics" }]
+keywords = ["llm", "1-bit", "quantization", "qwen3", "vllm", "llama.cpp"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "torch>=2.7",
+  "safetensors>=0.4",
+  "huggingface_hub>=0.30",
+]
+
+[project.optional-dependencies]
+# The loader targets these public runtime releases.
+vllm = ["vllm==0.31.0", "humming-kernels==0.1.16"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.urls]
+Model = "https://huggingface.co/precision-numerics/Boole-1.7B"
+Blog = "https://precisionnumerics.ai/blog/boole-1p7b"
+Repository = "https://github.com/PrecisionNumerics/boole-demo"
+Issues = "https://github.com/PrecisionNumerics/boole-demo/issues"
+
+[project.scripts]
+boole-prep = "boole_demo.cli:main"
+
+[project.entry-points."vllm.general_plugins"]
+boole_w1 = "boole_demo.vllm_plugin:register"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/boole_demo"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
