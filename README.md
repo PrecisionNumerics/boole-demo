@@ -1,100 +1,65 @@
 <p align="center">
-  <img src="logo-white-on-black.png" width="128" height="128" alt="Boole-1.7B logo">
+  <img src="assets/logo-white-on-black.png" width="128" height="128" alt="Boole-1.7B logo">
 </p>
 
 <h1 align="center">Boole Demo</h1>
 
 <p align="center">
-  <strong>1-bit Qwen3-1.7B, running locally.</strong><br>
-  Inference with llama.cpp or vLLM + Humming using public runtimes.
+  <strong>Run Boole-1.7B, a 1-bit Qwen3-1.7B, on your own machine.</strong><br>
+  llama.cpp for CPU or CUDA, vLLM + Humming for a CUDA GPU.
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/precision-numerics/Boole-1.7B"><strong>🤗 Hugging Face model</strong></a>
+  <a href="https://huggingface.co/precision-numerics/Boole-1.7B">🤗 Model</a>
+  &nbsp;·&nbsp;
+  <a href="https://precisionnumerics.ai/chat/">💬 On-Device Chat</a>
+  &nbsp;·&nbsp;
+  <a href="https://precisionnumerics.ai/blog/boole-1p7b">Blog</a>
   &nbsp;·&nbsp;
   <a href="#quick-start">Quick start</a>
 </p>
 
----
+![Qwen3-1.7B at different precisions: Boole-1.7B, Bonsai-1.7B, Ternary-Bonsai-1.7B, Unsloth Q3_K_S and Q3_K_M, and the BF16 original, on the ten-task average, each benchmark and stored weights](assets/comparison.svg)
 
-![Boole-1.7B compared with Bonsai, Ternary-Bonsai, and Qwen3](boole-1p7b-comparison.svg)
+Boole-1.7B is a 1-bit language model derived from Qwen3-1.7B. Its weights take 247 MB,
+13.9× less than the BF16 original, and it keeps 85.9% of the original's ten-task benchmark
+average. See the [blog](https://precisionnumerics.ai/blog/boole-1p7b) for the evaluation.
 
-![Boole, Bonsai, and Qwen3 scores across ten evaluations](boole-1p7b-eval-comparison.svg)
+| Runtime | Model file | Hardware |
+| --- | --- | --- |
+| [llama.cpp](#llamacpp) | `Boole-1.7B-Q1_0.gguf` (292.1 MB) | CPU or CUDA GPU |
+| [vLLM + Humming](#vllm--humming) | `Boole-1.7B.safetensors` (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
 
-| Runtime | Model format | Hardware |
-|---|---|---|
-| [llama.cpp](#llamacpp) | Published Q1_0 GGUF | CPU or CUDA GPU |
-| [vLLM + Humming](#vllm--humming) | Packed checkpoint → local Humming export | CUDA GPU; bf16, single GPU |
-
-Safetensors shares sign bits between the embeddings and output head, with separate scales.
-GGUF Q1_0 packs bits and scales together, so it stores both matrices separately and produces
-a slightly larger file.
-
-The model is hosted at **`precision-numerics/Boole-1.7B`**.
-The model repository is currently private; use a Hugging Face account with access.
+The GGUF is larger because it stores the embedding and output matrices separately; the
+safetensors file shares their sign bits and keeps separate scales.
 
 ## Quick start
 
-Run these commands from a clone of this repository. Python 3.10+ is required.
+Python 3.10 or newer is required. Run the commands from a clone of this repository:
 
 ```bash
+git clone https://github.com/PrecisionNumerics/boole-demo.git
+cd boole-demo
+
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install huggingface_hub
-hf auth login
 
 export MODEL_REPO=precision-numerics/Boole-1.7B
 ```
 
-Choose a runtime below. The examples use a 4,096-token context and disable thinking.
+The examples use a 4,096-token context and disable thinking, which is the supported mode.
 
 ### llama.cpp
 
-Download the GGUF, which is ready to load without conversion:
+Download the GGUF, then fetch and build the pinned llama.cpp release:
 
 ```bash
 hf download "$MODEL_REPO" --include '*-Q1_0.gguf' --local-dir model
+bash scripts/setup_llama_cpp.sh            # CUDA build; GGML_CUDA=0 for CPU only
 ```
 
-Check out the pinned upstream runtime, then choose a CUDA or CPU build below:
-
-```bash
-git clone https://github.com/ggml-org/llama.cpp.git third_party/llama.cpp
-git -C third_party/llama.cpp checkout b42b7e6d3059503dd4bed6ca5dcf342bb6379f67
-```
-
-<details>
-<summary><strong>Build llama.cpp with CUDA</strong></summary>
-
-Requires Git, CMake, a C++ compiler, and a CUDA toolkit.
-
-```bash
-cmake -S third_party/llama.cpp -B third_party/llama.cpp/build \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=native
-cmake --build third_party/llama.cpp/build --config Release -j \
-    --target llama-server
-```
-
-</details>
-
-<details>
-<summary><strong>CPU inference</strong></summary>
-
-Configure and build without CUDA:
-
-```bash
-cmake -S third_party/llama.cpp -B third_party/llama.cpp/build \
-    -DCMAKE_BUILD_TYPE=Release -DGGML_CUDA=OFF
-cmake --build third_party/llama.cpp/build --config Release -j \
-    --target llama-server
-```
-
-Use `-ngl 0` in the server command below.
-
-</details>
-
-Start the server:
+Start the server and open the URL it prints:
 
 ```bash
 third_party/llama.cpp/build/bin/llama-server \
@@ -103,12 +68,11 @@ third_party/llama.cpp/build/bin/llama-server \
     --chat-template-kwargs '{"enable_thinking": false}'
 ```
 
-Once the server is ready, open the URL printed in the terminal in your browser.
-In the chat UI, try: **Explain why the sky is blue in one sentence.**
+Use `-ngl 0` on CPU. Try: **Explain why the sky is blue in one sentence.**
 
 ### vLLM + Humming
 
-Install the loader, prepare the model, and start the server:
+Install the loader, export the model, and start the server:
 
 ```bash
 python -m pip install -e '.[vllm]'
@@ -119,8 +83,7 @@ vllm serve out/humming \
     --default-chat-template-kwargs '{"enable_thinking": false}'
 ```
 
-Keep the server running. In another terminal, replace `<server-url>` with the server's URL
-and send a chat request:
+In another terminal, send a chat request (replace `<server-url>` with the server's URL):
 
 ```bash
 curl -sS '<server-url>/v1/chat/completions' \
@@ -133,17 +96,26 @@ curl -sS '<server-url>/v1/chat/completions' \
     }'
 ```
 
-The reply is in `choices[0].message.content`. Change the message to ask your own question.
+The reply is in `choices[0].message.content`.
 
-`boole-prep` downloads and exports the packed checkpoint. Installing the package registers the
-loader for its 1-bit embedding and output head. This release includes the Qwen3-1.7B config
-and tokenizer files, so a downloaded model directory can also be exported offline in place
-of `MODEL_REPO`.
+`boole-prep` downloads the packed checkpoint and writes a vLLM model directory. Installing
+the package registers a vLLM plugin that loads the 1-bit embedding and output head. The model
+repository includes the Qwen3-1.7B config and tokenizer files, so a downloaded model directory
+can also be exported offline by passing its path instead of `MODEL_REPO`.
 
-The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, pinned by the package.
+The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, both pinned by the `vllm` extra.
+
+## Repository layout
+
+| Path | Contents |
+| --- | --- |
+| `src/boole_demo/` | Checkpoint reader, vLLM export, vLLM plugin and the `boole-prep` command |
+| `scripts/` | `setup_llama_cpp.sh`: fetch and build the pinned llama.cpp |
+| `tests/` | CPU-only tests on a synthetic checkpoint (`pip install -e '.[dev]'`, then `pytest`) |
+| `assets/` | README figure and logo |
 
 ## License
 
-Runtime code and model weights are licensed under **Apache License 2.0**.
-See the [runtime license](LICENSE) and
+Runtime code and model weights are licensed under **Apache License 2.0**. See the
+[runtime license](LICENSE) and the
 [model license](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/LICENSE).
