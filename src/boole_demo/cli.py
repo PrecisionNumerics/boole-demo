@@ -1,4 +1,4 @@
-"""Export a public packed model for vLLM + Humming."""
+"""Export a packed safetensors model for vLLM + Humming."""
 
 from __future__ import annotations
 
@@ -12,17 +12,30 @@ from .model_dir import TOKENIZER_FILES
 from .vllm_export import export_vllm_dir
 from .w1 import W1Checkpoint
 
+SAFETENSORS_REPO = "precision-numerics/Boole-1.7B"
+GGUF_REPO = "precision-numerics/Boole-1.7B-GGUF"
+
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="boole-prep", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     export = sub.add_parser("vllm", help="download and export a model for vLLM + Humming")
-    export.add_argument("model", help="Hugging Face model repo ID or downloaded model directory")
+    export.add_argument(
+        "model",
+        nargs="?",
+        default=SAFETENSORS_REPO,
+        help=f"packed safetensors repo ID or downloaded directory (default: {SAFETENSORS_REPO})",
+    )
     export.add_argument("--out", type=Path, required=True, help="output model directory")
     args = parser.parse_args(argv)
 
     source = Path(args.model)
     if not source.is_dir():
+        if args.model == GGUF_REPO:
+            parser.error(
+                f"vLLM export requires packed safetensors weights; use {SAFETENSORS_REPO}. "
+                "Run the GGUF release with llama.cpp."
+            )
         source = Path(
             snapshot_download(
                 args.model, allow_patterns=["*.safetensors", "config.json", *TOKENIZER_FILES]

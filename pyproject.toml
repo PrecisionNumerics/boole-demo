@@ -23,6 +23,7 @@ classifiers = [
 ]
 dependencies = [
   "torch>=2.7",
+  "numpy>=1.26",
   "safetensors>=0.4",
   "huggingface_hub>=0.30",
 ]
@@ -34,6 +35,7 @@ dev = ["pytest>=8", "ruff>=0.6"]
 
 [project.urls]
 Model = "https://huggingface.co/precision-numerics/Boole-1.7B"
+GGUF = "https://huggingface.co/precision-numerics/Boole-1.7B-GGUF"
 Blog = "https://precisionnumerics.ai/blog/boole-1p7b"
 Repository = "https://github.com/PrecisionNumerics/boole-demo"
 Issues = "https://github.com/PrecisionNumerics/boole-demo/issues"

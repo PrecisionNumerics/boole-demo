@@ -10,7 +10,9 @@
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/precision-numerics/Boole-1.7B">🤗 Model</a>
+  <a href="https://huggingface.co/precision-numerics/Boole-1.7B">Safetensors</a>
+  &nbsp;·&nbsp;
+  <a href="https://huggingface.co/precision-numerics/Boole-1.7B-GGUF">GGUF</a>
   &nbsp;·&nbsp;
   <a href="https://precisionnumerics.ai/chat/">💬 On-Device Chat</a>
   &nbsp;·&nbsp;
@@ -27,8 +29,8 @@ average. See the [blog](https://precisionnumerics.ai/blog/boole-1p7b) for the ev
 
 | Runtime | Model file | Hardware |
 | --- | --- | --- |
-| [llama.cpp](#llamacpp) | `Boole-1.7B-Q1_0.gguf` (292.1 MB) | CPU or CUDA GPU |
-| [vLLM + Humming](#vllm--humming) | `Boole-1.7B.safetensors` (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
+| [llama.cpp](#llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
+| [vLLM + Humming](#vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
 
 The GGUF is larger because it stores the embedding and output matrices separately; the
 safetensors file shares their sign bits and keeps separate scales.
@@ -44,8 +46,6 @@ cd boole-demo
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install huggingface_hub
-
-export MODEL_REPO=precision-numerics/Boole-1.7B
 ```
 
 The examples use a 4,096-token context and disable thinking, which is the supported mode.
@@ -55,7 +55,7 @@ The examples use a 4,096-token context and disable thinking, which is the suppor
 Download the GGUF, then fetch and build the pinned llama.cpp release:
 
 ```bash
-hf download "$MODEL_REPO" --include '*-Q1_0.gguf' --local-dir model
+hf download precision-numerics/Boole-1.7B-GGUF Boole-1.7B-Q1_0.gguf --local-dir model
 bash scripts/setup_llama_cpp.sh            # CUDA build; GGML_CUDA=0 for CPU only
 ```
 
@@ -76,7 +76,7 @@ Install the loader, export the model, and start the server:
 
 ```bash
 python -m pip install -e '.[vllm]'
-boole-prep vllm "$MODEL_REPO" --out out/humming
+boole-prep vllm precision-numerics/Boole-1.7B --out out/humming
 
 vllm serve out/humming \
     --dtype bfloat16 --max-model-len 4096 \
@@ -99,9 +99,12 @@ curl -sS '<server-url>/v1/chat/completions' \
 The reply is in `choices[0].message.content`.
 
 `boole-prep` downloads the packed checkpoint and writes a vLLM model directory. Installing
-the package registers a vLLM plugin that loads the 1-bit embedding and output head. The model
-repository includes the Qwen3-1.7B config and tokenizer files, so a downloaded model directory
-can also be exported offline by passing its path instead of `MODEL_REPO`.
+the package registers a vLLM plugin that loads the 1-bit embedding and output head. The
+safetensors repository includes the Qwen3-1.7B config and tokenizer files, so a downloaded
+model directory can also be exported offline by passing its path instead of the repo ID.
+
+The repo ID defaults to `precision-numerics/Boole-1.7B`; `boole-prep vllm --out out/humming`
+exports the same model. The GGUF repository is for llama.cpp.
 
 The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, both pinned by the `vllm` extra.
 
