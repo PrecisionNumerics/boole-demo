@@ -9,36 +9,21 @@
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/precision-numerics/Boole-1.7B-GGUF">Boole-1.7B</a>
-  &nbsp;·&nbsp;
-  <a href="https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF">Boole-32B-A2.5B-preview</a>
+  <a href="https://huggingface.co/precision-numerics">🤗 Models</a>
   &nbsp;·&nbsp;
   <a href="https://precisionnumerics.ai/chat/">💬 On-Device Chat</a>
-  &nbsp;·&nbsp;
-  <a href="https://precisionnumerics.ai/blog/boole-1p7b">Blog</a>
   &nbsp;·&nbsp;
   <a href="#quick-start">Quick start</a>
 </p>
 
-![Boole-1.7B against Bonsai-1.7B (1-bit and ternary), 4-bit LFM2.5 (QAD) and Granite-4.0-H-350M, on the ten-task average, each benchmark and stored weights](assets/under-500mb.svg)
-
-- **[Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF)**: a 1-bit Qwen3-1.7B. Its weights take
-  247 MB, 13.9× less than BF16, and it keeps 85.9% of the original's ten-task average
-  ([blog](https://precisionnumerics.ai/blog/boole-1p7b)).
-- **[Boole-32B-A2.5B-preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF)**:
-  [Flint](https://huggingface.co/RecursiveSI/flint), a 39.8B-total, 2.5B-active mixture-of-experts coding model,
-  compressed to 8.3 GiB with 21% of routed experts pruned and 1.8 bits per weight. On one RTX 5090 it decodes
-  2.0× faster than the fastest Flint GGUF we tested.
-
 | Model | Runtime | Model file | Hardware |
 | --- | --- | --- | --- |
-| Boole-1.7B | [llama.cpp](#boole-17b-llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
-| Boole-1.7B | [vLLM + Humming](#boole-17b-vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
-| Boole-32B-A2.5B-preview | [llama.cpp, our branch](#boole-32b-a25b-preview-llamacpp-our-branch) | [Boole-32B-A2.5B-preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF/blob/main/Boole-32B-A2.5B-preview-Q2_0.gguf) (8.3 GiB) | CUDA GPU |
+| [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF) | [llama.cpp](#boole-17b-llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
+| [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B) | [vLLM + Humming](#boole-17b-vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
+| [Boole-32B-A2.5B-preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF) | [llama.cpp, our branch](#boole-32b-a25b-preview-llamacpp-our-branch) | [Boole-32B-A2.5B-preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF/blob/main/Boole-32B-A2.5B-preview-Q2_0.gguf) (8.3 GiB) | CUDA GPU |
 
-The Boole-1.7B GGUF is larger than the safetensors file because it stores the embedding and output
-matrices separately. Boole-32B-A2.5B-preview needs our llama.cpp branch, which this repository pins;
-stock llama.cpp cannot load it yet.
+Each model card has the evaluation and speed results. Boole-32B-A2.5B-preview needs our llama.cpp
+branch, which this repository pins; stock llama.cpp cannot load it yet.
 
 ## Quick start
 
@@ -140,7 +125,7 @@ Fibonacci number iteratively.**
 | `src/boole_demo/` | Checkpoint reader, vLLM export, vLLM plugin and the `boole-prep` command |
 | `scripts/` | `setup_llama_cpp.sh`: fetch and build the pinned llama.cpp (upstream for Boole-1.7B, our branch for Boole-32B-A2.5B-preview with `MODEL=boole-32b`) |
 | `tests/` | CPU-only tests on a synthetic checkpoint (`pip install -e '.[dev]'`, then `pytest`) |
-| `assets/` | README figures and logo |
+| `assets/` | Logo |
 
 ## License
 
