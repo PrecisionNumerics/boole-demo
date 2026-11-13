@@ -18,7 +18,7 @@
 
 | Model | Runtime | Model file | Hardware |
 | --- | --- | --- | --- |
-| [Boole-32B-A2.5B-preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF) | [llama.cpp](#boole-32b-a25b-preview-llamacpp) | [Boole-32B-A2.5B-preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF/blob/main/Boole-32B-A2.5B-preview-Q2_0.gguf) (8.3 GiB) | CUDA GPU |
+| [Boole-32B-A2.5B-preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF) | [llama.cpp](#boole-32b-a25b-preview-llamacpp) | [Boole-32B-A2.5B-preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF/blob/main/Boole-32B-A2.5B-preview-Q2_0.gguf) (9.0 GB) | CUDA GPU |
 | [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF) | [llama.cpp](#boole-17b-llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
 | [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B) | [vLLM + Humming](#boole-17b-vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
 
@@ -56,7 +56,7 @@ GGML_CUDA_GRAPH_OPT=1 third_party/llama.cpp/build/bin/llama-server \
     -ngl 99 -fa on -ub 1024 -c 32768
 ```
 
-It needs about 10.3 GB of GPU memory at this 32K context. The model reasons before it answers, and the
+It needs about 10.8 GB of GPU memory at this 32K context. The model reasons before it answers, and the
 reasoning is returned separately from the reply. Try: **Write a Python function that returns the n-th
 Fibonacci number iteratively.**
 
