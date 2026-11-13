@@ -5,46 +5,25 @@
 <h1 align="center">Boole Demo</h1>
 
 <p align="center">
-  <strong>Run Boole models on your own machine.</strong><br>
-  Boole-1.7B on CPU or CUDA (llama.cpp, vLLM + Humming) · Boole-32B-A2.5B-preview on a CUDA GPU (llama.cpp)
+  <strong>Run Boole models on your own machine.</strong>
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/precision-numerics/Boole-1.7B">Boole-1.7B</a>
+  <a href="#boole-17b">Boole-1.7B</a>
   &nbsp;·&nbsp;
-  <a href="https://huggingface.co/precision-numerics/Boole-1.7B-GGUF">Boole-1.7B GGUF</a>
-  &nbsp;·&nbsp;
-  <a href="https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF">Boole-32B-A2.5B-preview GGUF</a>
+  <a href="#boole-32b-a25b-preview">Boole-32B-A2.5B-preview</a>
   &nbsp;·&nbsp;
   <a href="https://precisionnumerics.ai/chat/">💬 On-Device Chat</a>
   &nbsp;·&nbsp;
-  <a href="https://precisionnumerics.ai/blog/boole-1p7b">Blog</a>
+  <a href="https://precisionnumerics.ai/blog/boole-1p7b">Boole-1.7B blog</a>
   &nbsp;·&nbsp;
   <a href="#quick-start">Quick start</a>
 </p>
 
-![Boole-1.7B against Bonsai-1.7B (1-bit and ternary), 4-bit LFM2.5 (QAD) and Granite-4.0-H-350M, on the ten-task average, each benchmark and stored weights](assets/under-500mb.svg)
-
-Boole-1.7B is a 1-bit language model derived from Qwen3-1.7B. Its weights take 247 MB,
-13.9× less than the BF16 original, and it keeps 85.9% of the original's ten-task benchmark
-average. See the [blog](https://precisionnumerics.ai/blog/boole-1p7b) for the evaluation.
-
-| Runtime | Model file | Hardware |
-| --- | --- | --- |
-| [llama.cpp](#llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
-| [vLLM + Humming](#vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
-
-The GGUF is larger because it stores the embedding and output matrices separately; the
-safetensors file shares their sign bits and keeps separate scales.
-
-[Boole-32B-A2.5B-preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF) is
-[Flint](https://huggingface.co/RecursiveSI/flint), a 39.8B-total, 2.5B-active mixture-of-experts model for coding
-agents, compressed to 8.3 GiB: 21% of its routed experts are pruned and the rest average 1.8 bits per weight.
-It runs on our llama.cpp branch, which [this repository pins](#boole-32b-a25b-preview); stock llama.cpp cannot load it yet.
-
-| Runtime | Model file | Hardware |
-| --- | --- | --- |
-| [llama.cpp, our branch](#boole-32b-a25b-preview) | [Boole-32B-A2.5B-preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF/blob/main/Boole-32B-A2.5B-preview-Q2_0.gguf) (8.3 GiB) | CUDA GPU |
+| Model | What it is | Weights | Runtimes | Hardware |
+| --- | --- | --- | --- | --- |
+| [Boole-1.7B](#boole-17b) | 1-bit Qwen3-1.7B | 247 MB | [llama.cpp](#llamacpp), [vLLM + Humming](#vllm--humming) | CPU or CUDA GPU |
+| [Boole-32B-A2.5B-preview](#boole-32b-a25b-preview) | Flint MoE (2.5B active), 21% of experts pruned, 1.8 bits per weight | 8.3 GiB | [llama.cpp, our branch](#llamacpp-our-branch) | CUDA GPU |
 
 ## Quick start
 
@@ -59,11 +38,31 @@ source .venv/bin/activate
 python -m pip install huggingface_hub
 ```
 
+Then follow the section for your model.
+
+## Boole-1.7B
+
+![Boole-1.7B against Bonsai-1.7B (1-bit and ternary), 4-bit LFM2.5 (QAD) and Granite-4.0-H-350M, on the ten-task average, each benchmark and stored weights](assets/under-500mb.svg)
+
+Boole-1.7B is a 1-bit language model derived from Qwen3-1.7B. Its weights take 247 MB,
+13.9× less than the BF16 original, and it keeps 85.9% of the original's ten-task benchmark
+average. See the [blog](https://precisionnumerics.ai/blog/boole-1p7b) for the evaluation.
+[Safetensors](https://huggingface.co/precision-numerics/Boole-1.7B) ·
+[GGUF](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF)
+
+| Runtime | Model file | Hardware |
+| --- | --- | --- |
+| [llama.cpp](#llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
+| [vLLM + Humming](#vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
+
+The GGUF is larger because it stores the embedding and output matrices separately; the
+safetensors file shares their sign bits and keeps separate scales.
+
 The examples use a 4,096-token context and disable thinking, which is the supported mode.
 
 ### llama.cpp
 
-Download the GGUF, then fetch and build the pinned llama.cpp release:
+Download the GGUF, then fetch and build the pinned upstream llama.cpp:
 
 ```bash
 hf download precision-numerics/Boole-1.7B-GGUF Boole-1.7B-Q1_0.gguf --local-dir model
@@ -119,7 +118,23 @@ exports the same model. The GGUF repository is for llama.cpp.
 
 The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, both pinned by the `vllm` extra.
 
-### Boole-32B-A2.5B-preview
+## Boole-32B-A2.5B-preview
+
+![Score vs. model size on GSM8K, IFEval, IFBench, LiveCodeBench v6, HumanEval+ and MBPP+: Boole-32B-A2.5B-preview (8.3 GiB) against Unsloth UD-IQ1_M (10.6 GiB), Flint INT4 (24.2 GiB) and Flint BF16 (74.1 GiB)](assets/boole-32b-score-vs-size.svg)
+
+Boole-32B-A2.5B-preview is [Flint](https://huggingface.co/RecursiveSI/flint), a 39.8B-total, 2.5B-active
+mixture-of-experts model for coding agents, compressed to 8.3 GiB: 21% of its routed experts are pruned and the
+rest average 1.8 bits per weight. On one RTX 5090 it decodes 2.0× faster than the fastest Flint GGUF we tested.
+See the [model card](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF) for evaluation and
+speed details.
+
+| Runtime | Model file | Hardware |
+| --- | --- | --- |
+| [llama.cpp, our branch](#llamacpp-our-branch) | [Boole-32B-A2.5B-preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF/blob/main/Boole-32B-A2.5B-preview-Q2_0.gguf) (8.3 GiB) | CUDA GPU |
+
+It runs on our llama.cpp branch, which this repository pins; stock llama.cpp cannot load it yet.
+
+### llama.cpp (our branch)
 
 Download the GGUF, then fetch and build our pinned llama.cpp branch (CUDA only; it builds into
 `third_party/llama.cpp-boole-32b`, next to the Boole-1.7B build):
@@ -148,7 +163,7 @@ Fibonacci number iteratively.**
 | `src/boole_demo/` | Checkpoint reader, vLLM export, vLLM plugin and the `boole-prep` command |
 | `scripts/` | `setup_llama_cpp.sh`: fetch and build the pinned llama.cpp (upstream for Boole-1.7B, our branch for Boole-32B-A2.5B-preview with `MODEL=boole-32b`) |
 | `tests/` | CPU-only tests on a synthetic checkpoint (`pip install -e '.[dev]'`, then `pytest`) |
-| `assets/` | README figure and logo |
+| `assets/` | README figures and logo |
 
 ## License
 
