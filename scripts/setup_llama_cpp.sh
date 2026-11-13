@@ -12,7 +12,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # PrecisionNumerics/llama.cpp master: upstream llama.cpp plus our mixed-precision MoE expert kernels
 REPO="https://github.com/PrecisionNumerics/llama.cpp.git"
-PINNED_COMMIT="6a51bbd0a78c99de975bfd22112e1fc86aac45c6"
+PINNED_COMMIT="7b225ec3c9acac279f0748c40136c5bf198acf9d"
 DEFAULT_DEST="$ROOT/third_party/llama.cpp"
 COMMIT="${LLAMA_CPP_COMMIT:-$PINNED_COMMIT}"
 DEST="${1:-$DEFAULT_DEST}"
