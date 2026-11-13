@@ -1,39 +1,29 @@
 <p align="center">
-  <img src="assets/logo-white-on-black.png" width="128" height="128" alt="Boole-1.7B logo">
+  <img src="assets/logo-white-on-black.png" width="128" height="128" alt="Boole logo">
 </p>
 
 <h1 align="center">Boole Demo</h1>
 
 <p align="center">
-  <strong>Run Boole-1.7B, a 1-bit Qwen3-1.7B, on your own machine.</strong><br>
-  llama.cpp for CPU or CUDA, vLLM + Humming for a CUDA GPU.
+  <strong>Run Boole models on your own machine.</strong>
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/precision-numerics/Boole-1.7B">Safetensors</a>
-  &nbsp;·&nbsp;
-  <a href="https://huggingface.co/precision-numerics/Boole-1.7B-GGUF">GGUF</a>
+  <a href="https://huggingface.co/precision-numerics">🤗 Models</a>
   &nbsp;·&nbsp;
   <a href="https://precisionnumerics.ai/chat/">💬 On-Device Chat</a>
-  &nbsp;·&nbsp;
-  <a href="https://precisionnumerics.ai/blog/boole-1p7b">Blog</a>
   &nbsp;·&nbsp;
   <a href="#quick-start">Quick start</a>
 </p>
 
-![Boole-1.7B against Bonsai-1.7B (1-bit and ternary), 4-bit LFM2.5 (QAD) and Granite-4.0-H-350M, on the ten-task average, each benchmark and stored weights](assets/under-500mb.svg)
+| Model | Runtime | Model file | Hardware |
+| --- | --- | --- | --- |
+| [Boole-32B-A2.5B-Preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-Preview-GGUF) | [llama.cpp](#boole-32b-a25b-preview-llamacpp) | [Boole-32B-A2.5B-Preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-Preview-GGUF/blob/main/Boole-32B-A2.5B-Preview-Q2_0.gguf) (9.0 GB) | CUDA GPU |
+| [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF) | [llama.cpp](#boole-17b-llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
+| [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B) | [vLLM + Humming](#boole-17b-vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
 
-Boole-1.7B is a 1-bit language model derived from Qwen3-1.7B. Its weights take 247 MB,
-13.9× less than the BF16 original, and it keeps 85.9% of the original's ten-task benchmark
-average. See the [blog](https://precisionnumerics.ai/blog/boole-1p7b) for the evaluation.
-
-| Runtime | Model file | Hardware |
-| --- | --- | --- |
-| [llama.cpp](#llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
-| [vLLM + Humming](#vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
-
-The GGUF is larger because it stores the embedding and output matrices separately; the
-safetensors file shares their sign bits and keeps separate scales.
+The llama.cpp rows run on [our llama.cpp fork](https://github.com/PrecisionNumerics/llama.cpp), which this
+repository pins. Each model card has the evaluation and speed results.
 
 ## Quick start
 
@@ -48,29 +38,44 @@ source .venv/bin/activate
 python -m pip install huggingface_hub
 ```
 
-The examples use a 4,096-token context and disable thinking, which is the supported mode.
+For llama.cpp, fetch and build our pinned fork once; it serves both models:
 
-### llama.cpp
+```bash
+bash scripts/setup_llama_cpp.sh            # CUDA build; GGML_CUDA=0 for CPU only (Boole-1.7B)
+```
 
-Download the GGUF, then fetch and build the pinned llama.cpp release:
+### Boole-32B-A2.5B-Preview: llama.cpp
+
+Download the GGUF, then start the server and open the URL it prints (CUDA GPU required):
+
+```bash
+hf download precision-numerics/Boole-32B-A2.5B-Preview-GGUF Boole-32B-A2.5B-Preview-Q2_0.gguf --local-dir model
+
+GGML_CUDA_GRAPH_OPT=1 third_party/llama.cpp/build/bin/llama-server \
+    -m model/Boole-32B-A2.5B-Preview-Q2_0.gguf \
+    -ngl 99 -fa on -ub 1024 -c 32768
+```
+
+It needs about 10.8 GB of GPU memory at this 32K context. The model reasons before it answers, and the
+reasoning is returned separately from the reply. Try: **Write a Python function that returns the n-th
+Fibonacci number iteratively.**
+
+### Boole-1.7B: llama.cpp
+
+Download the GGUF, then start the server and open the URL it prints:
 
 ```bash
 hf download precision-numerics/Boole-1.7B-GGUF Boole-1.7B-Q1_0.gguf --local-dir model
-bash scripts/setup_llama_cpp.sh            # CUDA build; GGML_CUDA=0 for CPU only
-```
 
-Start the server and open the URL it prints:
-
-```bash
 third_party/llama.cpp/build/bin/llama-server \
-    -m model/*-Q1_0.gguf \
+    -m model/Boole-1.7B-Q1_0.gguf \
     -ngl 99 -c 4096 \
     --reasoning off
 ```
 
-Use `-ngl 0` on CPU. Try: **Explain why the sky is blue in one sentence.**
+Use `-ngl 0` on CPU. Boole-1.7B is meant to run with thinking off. Try: **Explain why the sky is blue in one sentence.**
 
-### vLLM + Humming
+### Boole-1.7B: vLLM + Humming
 
 Install the loader, export the model, and start the server:
 
@@ -113,12 +118,13 @@ The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, both pinned b
 | Path | Contents |
 | --- | --- |
 | `src/boole_demo/` | Checkpoint reader, vLLM export, vLLM plugin and the `boole-prep` command |
-| `scripts/` | `setup_llama_cpp.sh`: fetch and build the pinned llama.cpp |
+| `scripts/` | `setup_llama_cpp.sh`: fetch and build our pinned llama.cpp fork (both models) |
 | `tests/` | CPU-only tests on a synthetic checkpoint (`pip install -e '.[dev]'`, then `pytest`) |
-| `assets/` | README figure and logo |
+| `assets/` | Logo |
 
 ## License
 
 Runtime code and model weights are licensed under **Apache License 2.0**. See the
 [runtime license](LICENSE) and the
-[model license](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/LICENSE).
+model licenses for [Boole-32B-A2.5B-Preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-Preview-GGUF/blob/main/LICENSE) and
+[Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/LICENSE).

@@ -1,23 +1,28 @@
 #!/usr/bin/env bash
 # Fetch and build llama.cpp at the commit this repository was validated against.
 #
-#   scripts/setup_llama_cpp.sh [install-dir]      (default: third_party/llama.cpp)
+#   scripts/setup_llama_cpp.sh [install-dir]
 #
 # Environment overrides:
 #   LLAMA_CPP_COMMIT   commit to build          (default: the pinned one below)
 #   CUDA_ARCH          CMake CUDA architecture  (default: native GPU, else 120)
-#   GGML_CUDA=0        build the CPU backend only
+#   GGML_CUDA=0        build the CPU backend only (Boole-1.7B; Boole-32B-A2.5B-Preview needs CUDA)
 set -euo pipefail
 
-PINNED_COMMIT="b42b7e6d3059503dd4bed6ca5dcf342bb6379f67"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# PrecisionNumerics/llama.cpp master: upstream llama.cpp plus our mixed-precision MoE expert kernels
+REPO="https://github.com/PrecisionNumerics/llama.cpp.git"
+PINNED_COMMIT="7b225ec3c9acac279f0748c40136c5bf198acf9d"
+DEFAULT_DEST="$ROOT/third_party/llama.cpp"
 COMMIT="${LLAMA_CPP_COMMIT:-$PINNED_COMMIT}"
-DEST="${1:-$(cd "$(dirname "$0")/.." && pwd)/third_party/llama.cpp}"
+DEST="${1:-$DEFAULT_DEST}"
 
 if [ ! -d "$DEST/.git" ]; then
   mkdir -p "$DEST"
   git -C "$DEST" init -q
-  git -C "$DEST" remote add origin https://github.com/ggml-org/llama.cpp.git
+  git -C "$DEST" remote add origin "$REPO"
 fi
+git -C "$DEST" remote set-url origin "$REPO"
 git -C "$DEST" fetch --depth 1 origin "$COMMIT"
 git -C "$DEST" checkout -q FETCH_HEAD
 echo "llama.cpp at $(git -C "$DEST" rev-parse HEAD)"
