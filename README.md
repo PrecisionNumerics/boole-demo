@@ -22,8 +22,8 @@
 | [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF) | [llama.cpp](#boole-17b-llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
 | [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B) | [vLLM + Humming](#boole-17b-vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
 
-Both models run on [our llama.cpp fork](https://github.com/PrecisionNumerics/llama.cpp), which this repository
-pins. Each model card has the evaluation and speed results.
+The llama.cpp rows run on [our llama.cpp fork](https://github.com/PrecisionNumerics/llama.cpp), which this
+repository pins. Each model card has the evaluation and speed results.
 
 ## Quick start
 
