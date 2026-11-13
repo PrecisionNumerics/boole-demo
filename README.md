@@ -18,12 +18,12 @@
 
 | Model | Runtime | Model file | Hardware |
 | --- | --- | --- | --- |
-| [Boole-32B-A2.5B-preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF) | [llama.cpp, our branch](#boole-32b-a25b-preview-llamacpp-our-branch) | [Boole-32B-A2.5B-preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF/blob/main/Boole-32B-A2.5B-preview-Q2_0.gguf) (8.3 GiB) | CUDA GPU |
+| [Boole-32B-A2.5B-preview](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF) | [llama.cpp](#boole-32b-a25b-preview-llamacpp) | [Boole-32B-A2.5B-preview-Q2_0.gguf](https://huggingface.co/precision-numerics/Boole-32B-A2.5B-preview-GGUF/blob/main/Boole-32B-A2.5B-preview-Q2_0.gguf) (8.3 GiB) | CUDA GPU |
 | [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF) | [llama.cpp](#boole-17b-llamacpp) | [Boole-1.7B-Q1_0.gguf](https://huggingface.co/precision-numerics/Boole-1.7B-GGUF/blob/main/Boole-1.7B-Q1_0.gguf) (292.1 MB) | CPU or CUDA GPU |
 | [Boole-1.7B](https://huggingface.co/precision-numerics/Boole-1.7B) | [vLLM + Humming](#boole-17b-vllm--humming) | [Boole-1.7B.safetensors](https://huggingface.co/precision-numerics/Boole-1.7B/blob/main/Boole-1.7B.safetensors) (247.1 MB), exported locally | CUDA GPU, bf16, single GPU |
 
-Each model card has the evaluation and speed results. Boole-32B-A2.5B-preview needs our llama.cpp
-branch, which this repository pins; stock llama.cpp cannot load it yet.
+Both models run on [our llama.cpp fork](https://github.com/PrecisionNumerics/llama.cpp), which this repository
+pins. Each model card has the evaluation and speed results.
 
 ## Quick start
 
@@ -38,20 +38,20 @@ source .venv/bin/activate
 python -m pip install huggingface_hub
 ```
 
-### Boole-32B-A2.5B-preview: llama.cpp (our branch)
+For llama.cpp, fetch and build our pinned fork once; it serves both models:
 
-Download the GGUF, then fetch and build our pinned llama.cpp branch (CUDA only; it builds into
-`third_party/llama.cpp-boole-32b`, separate from the Boole-1.7B build):
+```bash
+bash scripts/setup_llama_cpp.sh            # CUDA build; GGML_CUDA=0 for CPU only (Boole-1.7B)
+```
+
+### Boole-32B-A2.5B-preview: llama.cpp
+
+Download the GGUF, then start the server and open the URL it prints (CUDA GPU required):
 
 ```bash
 hf download precision-numerics/Boole-32B-A2.5B-preview-GGUF Boole-32B-A2.5B-preview-Q2_0.gguf --local-dir model
-MODEL=boole-32b bash scripts/setup_llama_cpp.sh
-```
 
-Start the server and open the URL it prints:
-
-```bash
-GGML_CUDA_GRAPH_OPT=1 third_party/llama.cpp-boole-32b/build/bin/llama-server \
+GGML_CUDA_GRAPH_OPT=1 third_party/llama.cpp/build/bin/llama-server \
     -m model/Boole-32B-A2.5B-preview-Q2_0.gguf \
     -ngl 99 -fa on -ub 1024 -c 32768
 ```
@@ -62,16 +62,11 @@ Fibonacci number iteratively.**
 
 ### Boole-1.7B: llama.cpp
 
-Download the GGUF, then fetch and build the pinned upstream llama.cpp:
+Download the GGUF, then start the server and open the URL it prints:
 
 ```bash
 hf download precision-numerics/Boole-1.7B-GGUF Boole-1.7B-Q1_0.gguf --local-dir model
-bash scripts/setup_llama_cpp.sh            # CUDA build; GGML_CUDA=0 for CPU only
-```
 
-Start the server and open the URL it prints:
-
-```bash
 third_party/llama.cpp/build/bin/llama-server \
     -m model/Boole-1.7B-Q1_0.gguf \
     -ngl 99 -c 4096 \
@@ -123,7 +118,7 @@ The loader targets **vLLM 0.31.0** and **humming-kernels 0.1.16**, both pinned b
 | Path | Contents |
 | --- | --- |
 | `src/boole_demo/` | Checkpoint reader, vLLM export, vLLM plugin and the `boole-prep` command |
-| `scripts/` | `setup_llama_cpp.sh`: fetch and build the pinned llama.cpp (upstream for Boole-1.7B, our branch for Boole-32B-A2.5B-preview with `MODEL=boole-32b`) |
+| `scripts/` | `setup_llama_cpp.sh`: fetch and build our pinned llama.cpp fork (both models) |
 | `tests/` | CPU-only tests on a synthetic checkpoint (`pip install -e '.[dev]'`, then `pytest`) |
 | `assets/` | Logo |
 
