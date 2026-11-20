@@ -56,7 +56,7 @@ GGML_CUDA_GRAPH_OPT=1 third_party/llama.cpp/build/bin/llama-server \
     -ngl 99 -fa on -ub 1024 -c 32768
 ```
 
-It needs about 10.8 GB of GPU memory at this 32K context. The model reasons before it answers, and the
+It needs about 10.9 GB of GPU memory at this 32K context. The model reasons before it answers, and the
 reasoning is returned separately from the reply. Try: **Write a Python function that returns the n-th
 Fibonacci number iteratively.**
 
